@@ -1,4 +1,7 @@
 <script setup>
+import { useDevicesList, useUserMedia } from '@vueuse/core'
+import { uploadAudio } from "~/utils/apiService.js";
+
 const messages = ref([
   {
     name: 'VIMMCQA',
@@ -6,11 +9,60 @@ const messages = ref([
   },
 ]);
 
-function addMessage(name, message) {
-  messages.value.push({ name, message });
+const { audioInputs: microphones, } = useDevicesList({ requestPermissions: true, })
+const currentMicrophone = computed(() => microphones.value[0]?.deviceId)
+
+const { stream, start } = useUserMedia({ constraints: { audio: { deviceId: currentMicrophone, } } })
+start()
+
+const mediaRecorder = ref(null)
+const audioChunks = ref([])
+const audioURL = ref(null)
+const isRecording = ref(false)
+
+const startRecording = () => {
+  mediaRecorder.value = new MediaRecorder(stream.value)
+  audioChunks.value = []
+
+  mediaRecorder.value.ondataavailable = (event) => {
+    audioChunks.value.push(event.data)
+  }
+
+  mediaRecorder.value.onstop = async () => {
+    const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' })
+    audioURL.value = URL.createObjectURL(audioBlob)
+
+    const formData = new FormData()
+    formData.append('audio', audioBlob)
+
+    try {
+      const result = await uploadAudio(audioBlob)
+      console.log(result)
+    } catch (error) {
+      console.error('Error uploading audio:', error)
+    }
+  }
+
+  mediaRecorder.value.start()
+  isRecording.value = true
 }
 
+// Stop recording audio
+const stopRecording = () => {
+  if (mediaRecorder.value && isRecording.value) {
+    mediaRecorder.value.stop()
+    isRecording.value = false
+  }
+}
 
+const toggleMic = () => {
+  console.log('Toggling mic')
+  if (isRecording.value) {
+    stopRecording()
+  } else {
+    startRecording()
+  }
+}
 </script>
 
 <template>
@@ -33,7 +85,14 @@ function addMessage(name, message) {
         />
       </div>
     </div>
-    <ChatInputBar @add-message="(message_info) => addMessage(message_info['sender'], message_info['message'])" />
+
+    <audio v-if="audioURL" :src="audioURL" controls></audio>
+
+    <ChatInputBar
+        @add-message="(message_info) => addMessage(message_info['sender'], message_info['message'])"
+        @toggle-mic="toggleMic"
+        :mic-status="isRecording"
+    />
 
   </div>
 </template>
