@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="h-screen flex flex-col justify-between w-16 py-8 bg-white dark:bg-gray-900 dark:border-gray-700">
+  <div class="h-screen flex flex-col justify-between w-16 py-8 bg-white dark:bg-zinc-900 dark:border-zinc-700">
 
     <div class="w-full flex flex-col items-center space-y-8 ">
 

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="h-screen py-8 overflow-y-auto bg-white border-l border-r sm:w-64 w-72 dark:bg-gray-900 dark:border-gray-700">
+  <div class="h-screen py-8 overflow-y-auto bg-white border-l border-r sm:w-64 w-72 dark:bg-zinc-900 dark:border-zinc-700">
     <div class="flex justify-between">
       <h2 class="px-5 text-lg font-medium text-gray-800 dark:text-white">All Chats</h2>
       <span class="px-5 text-lg text-gray-800 dark:text-white cursor-pointer">
