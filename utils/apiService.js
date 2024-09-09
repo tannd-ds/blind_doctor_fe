@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000'
+const BASE_URL = 'http://127.0.0.1:8000'
 
 const request = async (endpoint, method = 'GET', body = null) => {
   const options = {
@@ -25,5 +25,19 @@ const request = async (endpoint, method = 'GET', body = null) => {
 export async function uploadAudio(audioBlob) {
   const formData = new FormData()
   formData.append('audio', audioBlob, 'recording.wav')
-  return await request('/upload-audio', 'POST', formData)
+  return await request('/question-answering', 'POST', formData)
+}
+
+export async function getAnswer(audioBlob, question) {
+  // only audio or question can be sent
+  const formData = new FormData()
+  if (audioBlob) {
+    formData.append('audio', audioBlob, 'recording.wav')
+  } else if (question) {
+    formData.append('text', question)
+  } else {
+    throw new Error('Either audio or question must be provided')
+  }
+
+  return await request('/question-answering', 'POST', formData)
 }

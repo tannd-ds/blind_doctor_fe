@@ -1,6 +1,6 @@
 <script setup>
 import { useDevicesList, useUserMedia } from '@vueuse/core'
-import { uploadAudio } from "~/utils/apiService.js";
+import { getAnswer, uploadAudio } from "~/utils/apiService.js";
 
 const messages = ref([
   {
@@ -9,8 +9,25 @@ const messages = ref([
   },
 ]);
 
+const sendMessage = async (message) => {
+  try {
+    const result = await getAnswer(null, message)
+    addMessage('VIMMCQA', result.answer)
+    console.log(result)
+  } catch (error) {
+    console.error('Error uploading audio:', error)
+    addMessage('VIMMCQA', 'Sorry, I could not process your audio. Please try again.')
+    // TODO: only play if user doesn't mute
+    await playErrorVoice()
+  }
+};
+
+const addMessage = (name, message) => {
+  messages.value.push({ name, message });
+};
+
 const { audioInputs: microphones, } = useDevicesList({ requestPermissions: true, })
-const currentMicrophone = computed(() => microphones.value[0]?.deviceId)
+const currentMicrophone = computed(() => microphones.value[2]?.deviceId)
 
 const { stream, start } = useUserMedia({ constraints: { audio: { deviceId: currentMicrophone, } } })
 start()
@@ -32,14 +49,17 @@ const startRecording = () => {
     const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' })
     audioURL.value = URL.createObjectURL(audioBlob)
 
-    const formData = new FormData()
-    formData.append('audio', audioBlob)
+    // const formData = new FormData()
+    // formData.append('audio', audioBlob)
 
     try {
       const result = await uploadAudio(audioBlob)
       console.log(result)
     } catch (error) {
       console.error('Error uploading audio:', error)
+      addMessage('VIMMCQA', 'Sorry, I could not process your audio. Please try again.')
+      // TODO: only play if user doesn't mute
+      await playErrorVoice()
     }
   }
 
@@ -90,6 +110,7 @@ const toggleMic = () => {
 
     <ChatInputBar
         @add-message="(message_info) => addMessage(message_info['sender'], message_info['message'])"
+        @submit="(message) => sendMessage(message)"
         @toggle-mic="toggleMic"
         :mic-status="isRecording"
     />

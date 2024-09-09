@@ -2,7 +2,7 @@
 const props = defineProps({
   micStatus: Boolean,
 })
-const emit = defineEmits(['add-message', 'toggle-mic']);
+const emit = defineEmits(['add-message', 'toggle-mic', 'submit']);
 
 const inputMessage = ref('');
 
@@ -10,6 +10,7 @@ const handleSubmit = (e) => {
   e.preventDefault();
   if (!inputMessage.value) return;
   emit('add-message', {sender: 'You', message:inputMessage.value});
+  emit('submit', inputMessage.value);
   inputMessage.value = '';
 };
 </script>
