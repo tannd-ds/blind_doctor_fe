@@ -6,8 +6,8 @@
 </script>
 
 <template>
-    <div class="flex gap-3 my-4 text-gray-600 text-sm flex-1 items-center">
-      <span class="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
+    <div class="flex gap-3 my-4 text-gray-600 text-sm flex-1 items-start">
+      <span class="mt-2 relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
         <div class="rounded-full bg-gray-100 border p-1">
           <slot name="avatar">
             <svg v-if="props.name=='VIMMCQA'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">

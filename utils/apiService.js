@@ -23,9 +23,7 @@ const request = async (endpoint, method = 'GET', body = null) => {
 }
 
 export async function uploadAudio(audioBlob) {
-  const formData = new FormData()
-  formData.append('audio', audioBlob, 'recording.wav')
-  return await request('/question-answering', 'POST', formData)
+  return await getAnswer(audioBlob)
 }
 
 export async function getAnswer(audioBlob, question) {
