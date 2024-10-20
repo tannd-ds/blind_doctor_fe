@@ -20,8 +20,8 @@
         </div>
       </span>
       <p class="leading-relaxed">
-        <span class="block font-bold text-gray-700">{{props.name}}</span>
-        <span>{{props.message}}</span>
+        <span class="block font-bold text-gray-700 dark:text-gray-300">{{props.name}}</span>
+        <span class="dark:text-gray-400">{{props.message}}</span>
       </p>
     </div>
 </template>

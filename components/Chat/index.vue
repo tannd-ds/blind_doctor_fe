@@ -59,7 +59,9 @@ const startRecording = () => {
     audioURL.value = URL.createObjectURL(audioBlob)
 
     try {
+      isAnswering.value = true
       const result = await getAnswer(audioBlob)
+      isAnswering.value = false
       if (result.transcription)
         addMessage('You', result.transcription)
       addMessage('VIMMCQA', result.answer)
